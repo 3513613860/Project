@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>修改文章</title>
+    <script src="jquery-1.9.1.min%20(1).js"></script>
+    <script>
+        var id = 0;
+
+        jQuery(function () {
+            //1.获取文章id（从url获取） ?id = xxx
+            var thisPara = location.search.substring(1);  //求子串，（id = xxx）
+            id = thisPara.split("=")[1];
+            alert(id);
+            //2.查询数据库信息并展示
+            jQuery.getJSON("initart",{
+                "id":id
+            },function (data) {
+                if(data != null && data.succ == 1){
+                    alert("初始化成功");
+                    jQuery("#title").val(data.articleinfo.title);
+                    jQuery("#content").val(data.articleinfo.content);
+                }else{
+                    alert("参数不正确");
+                }
+            });
+        });
+
+        function mybutton(type) {
+
+
+            var title = jQuery("#title");
+            var content = jQuery("#content");
+            if(type == 2){
+                if(confirm("确认清空吗")){
+                    title.val("");
+                    content.val("");
+                }
+                return false;
+            }
+
+            //非空效验
+            if(title.val().trim() == ""){
+                alert("请先输入标题");
+                title.focus();
+                return false;
+            }
+
+            if(content.val().trim() == ""){
+                alert("请先输入正文");
+                content.focus();
+                return false;
+            }
+
+            jQuery.getJSON("upart",{
+                "id":id,
+                "title":title.val(),
+                "content":content.val()
+            },function (data) {
+                if(data != null && data.succ == 1){
+                    alert("修改成功");
+                }else{
+                    alert("修改失败："+data.msg);
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+ <div style="margin-left: 50px;margin-top: 50px">
+     标题：<input id="title" name="title" type="text"></input><p></p>
+     正文：<textarea id="content" name="content" style="width: 50%;height: 300px;"></textarea><p></p>
+     <input type="button" value="提交" onclick="mybutton(1)">
+     <input type="button" value="清空" onclick="mybutton(2)">
+ </div>
+</body>
+</html>

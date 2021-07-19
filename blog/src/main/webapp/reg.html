@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>博客注册</title>
+    <script src="jquery-1.9.1.min%20(1).js"></script>
+    <script>
+        function mybutton(type) {
+            //拿到控件
+            var username = jQuery("#username");
+            var password1 = jQuery("#password1");
+            var password2 = jQuery("#password2");
+            if(type == 2){
+                //清空
+                if(confirm("确认清空吗？")){
+                    username.val("");
+                    password1.val("");
+                    password2.val("");
+                }
+                return false;
+            }
+
+            //非空效验
+            if(username.val().trim() == ""){
+                alert("请先输入用户名");
+                username.focus();
+                return false;
+            }
+            if(password1.val().trim() == ""){
+                alert("请先输入密码");
+                password1.focus();
+                return false;
+            }
+            if(password2.val().trim() == ""){
+                alert("请先输入确认密码");
+                password2.focus();
+                return false;
+            }
+
+            //比较两次输入密码是否一致
+            if(password1.val().trim() != password2.val().trim()){
+                if(confirm("两次密码不一致，请重新输入")){
+                    password1.val("");
+                    password2.val("");
+                    password1.focus();
+                }
+                return false;
+            }
+
+            //设置密码强度，大于6位
+            if(password1.val().trim().length < 6){
+                if(confirm("密码长度小于6位，请重新输入")){
+                    password1.val("");
+                    password2.val("");
+                    password1.focus();
+                }
+                return false;
+            }
+
+            //提交信息给后端
+            jQuery.getJSON("reg",{
+                "username":username.val(),
+                "password":password1.val()
+            },function (data) {
+                if(data != null && data.state == 200){
+                    //说明请求成功
+                    alert("恭喜，注册成功");
+                }else{
+                    alert("抱歉，注册失败，请重试");
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<div style="text-align: center;margin-top: 70px">
+    <h1>注册</h1>
+    &nbsp;用&nbsp;户&nbsp;名：<input id="username" name="username" type="text"><p></p>
+    &nbsp;密 &nbsp;&nbsp; &nbsp;&nbsp;码：<input id="password1" name="password1" type="password"><p></p>
+    确认密码：<input id="password2" name="password2" type="password"><p></p>
+    <input type="button" value="注册" onclick="mybutton(1)">
+    <input type="button" value="清空" onclick="mybutton(2)">
+</div>
+</body>
+</html>

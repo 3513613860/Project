@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>所有人文章列表</title>
+    <script src="jquery-1.9.1.min%20(1).js"></script>
+    <script>
+        //全局参数：当前页
+        var curpage = 1;
+
+        //全局参数：总页数
+        var total = 0;
+
+        //需要划分多少页
+        var many = 0;
+
+        function datefm(time){
+            var date = new Date(time);
+            //获取年月日
+            var y = date.getFullYear();
+            var m = date.getMonth();
+            var d = date.getDate();
+            return y+"-"+m+"-"+d;
+        };
+
+        jQuery(function () {
+            //1.先正确的赋值
+            var myparams = location.search;
+            if(myparams != ""){
+                curpage = parseInt(myparams.split("=")[1]);
+            }
+            jQuery.getJSON("list",{
+                "cpage":curpage,   //当前页面
+                "psize":2   //每页展示的最大条数
+            },function (data) {
+                if(data != null &&  data.succ == 1){
+                    total = data.total;
+                    many = total / 2 ;
+
+                    //todo:查询成功，拼接数据
+                    var html = "";
+                    for(var i = 0; i < data.list.length; i++){
+                        //文章对象
+                        var art = data.list[i];
+                        html+="        <tr>\n" +
+                            "            <td>"+art.id+"</td>\n" +
+                            "            <td><a href='detail.html?id="+art.id+"'>"+art.title+"</a></td>\n" +
+                            "            <td>"+datefm(art.createtime)+"</td>\n" +
+                            "            <td>"+art.rcount+"</td>\n" +
+                            "            <td>"+art.username+"</td>\n" +
+                            "        </tr>";
+                    }
+                    jQuery("#tab").append(html);
+
+                }else{
+                    alert("查询失败："+msg);
+                }
+            })
+        });
+
+        function mypage(type) {
+            if(type == 1){
+                //执行上一页
+                if(curpage > 1){
+                    location.href = "list.html?c="+(curpage-1);
+                }else{
+                    alert("当前已经是首页了");
+                    return false;
+                }
+            }else{
+                //执行下一页
+                if(curpage < many){
+                    location.href = "list.html?c="+(curpage+1);
+                 }else{
+                   alert("当前已经是尾页了");
+                    return false;
+                 }
+            }
+        }
+
+    </script>
+</head>
+<body>
+<div style="margin-top: 30px;text-align: center">
+    <h1>所有人文章列表</h1>
+    <table id="tab" style="width: 80%;margin-left: 150px" border="1" cellspacing="0">
+        <tr>
+            <td>编号</td>
+            <td>标题</td>
+            <td>发布时间</td>
+            <td>阅读量</td>
+            <td>作者</td>
+        </tr>
+    </table>
+    <p style="margin-top: 30px"></p>
+
+    <a href="javascript:mypage(1)">上一页</a>&nbsp;&nbsp; <a href="javascript:mypage(2)">下一页</a>
+</div>
+</body>
+</html>
