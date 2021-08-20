@@ -24,4 +24,26 @@ class UserMapperTest {
         int ret = userMapper.addUser(user);
         System.out.println(ret);
     }
+
+    @Test
+    void getUserById() {
+        int id = 19;
+        System.out.println(userMapper.getUserById(id));
+    }
+
+    @Test
+    void getUserByNameAndPassword() {
+        String username = "123";
+        String password = "123";
+        User user = userMapper.getUserByNameAndPassword(username,password);
+        System.out.println(user);
+    }
+
+
+    @Test
+    void upUser() {
+        int id = 19;
+        String username = "999";
+        System.out.println(userMapper.upUser(id,username));
+    }
 }
