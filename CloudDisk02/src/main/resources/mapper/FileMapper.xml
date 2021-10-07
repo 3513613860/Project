@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.Mapper.FileMapper">
+    <resultMap id="BaseResultMap" type="com.example.demo.Model.File">
+        <id column="id" property="id"></id>
+        <result column="filename" property="filename"></result>
+        <result column="fileSize" property="fileSize"></result>
+        <result column="fileType" property="fileType"></result>
+        <result column="updatedate" property="updatedate"></result>
+        <result property="uid" column="uid"></result>
+    </resultMap>
+
+    <insert id="upload">
+        insert into file(filename,fileSize,updatedate,fileType,uid)
+        values(#{filename},#{fileSize},#{updatedate},#{fileType},#{uid})
+    </insert>
+
+    <delete id="del">
+        delete from file where id=#{id}
+    </delete>
+
+
+    <delete id="dels">
+        delete from file where id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

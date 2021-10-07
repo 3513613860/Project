@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>我的text</title>
+</head>
+<body>
+
+<div>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="submit" class="btn btn-outline-danger" onclick="return checkfile()" value="上传文件"/>
+        <input class="btn btn-outline-primary" type="file" onchange="checkfile()" id="fileupload" name="file"
+               onpropertychange="getFileSize(this.value)"/><br/>
+    </form>
+</div>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+</html>

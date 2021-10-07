@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.Mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.example.demo.Model.User">
+               <id column="id" property="id"/>
+               <result column="name" property="name"/>
+               <result column="password" property="password"/>
+               <result column="phone" property="phone"/>
+               <result column="email" property="email"/>
+        <association property="list" columnPrefix="f_" resultMap="com.example.demo.Mapper.FileMapper.BaseResultMap">
+
+        </association>
+    </resultMap>
+    <insert id="addUser">
+        insert into user(name,password,phone,email)
+        values(#{name},#{password},#{phone},#{email})
+    </insert>
+
+
+    <select id="login" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select * from user where name=#{name} and password=#{password}
+    </select>
+
+
+    <select id="getAllDetail" resultMap="BaseResultMap">
+        select u.*,f.id f_id,f.filename f_filename,f.fileSize f_fileSize, f.updatedate f_updatedate,f.fileType f_fileType  from user u left join file f on u.id =  f.uid where u.id =#{uid}
+        and f.filename  like concat('%',#{curname},'%')   limit #{skipCount},#{psize}
+    </select>
+
+    <select id="getCount" resultMap="BaseResultMap">
+        select u.*,f.id f_id,f.filename f_filename,f.fileSize f_fileSize, f.updatedate f_updatedate,f.fileType f_fileType  from user u left join file f on u.id =  f.uid where u.id =#{uid}
+        and f.filename  like concat('%',#{curname},'%')
+    </select>
+
+    <select id="query" resultType="com.example.demo.Model.User">
+        select * from user  where name = #{name}
+    </select>
+</mapper>

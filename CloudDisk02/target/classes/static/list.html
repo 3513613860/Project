@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN" >
+<head>
+    <!-- 指定字符集 -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>企业云盘系统</title>
+    <!-- 1. 导入CSS的全局样式 -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/common.css">
+   <!--    &lt;!&ndash; 2. jQuery导入，建议使用1.9以上的版本 &ndash;&gt;-->
+    <script src="js/jquery-2.1.0.min.js"></script>
+    <!-- 3. 导入bootstrap的js文件 -->
+    <!-- <script src="js/bootstrap.min.js"></script>-->
+    <style type="text/css">
+        td, th {
+            text-align: center;
+        }
+    </style>
+
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: auto;
+        }
+
+        body {
+            background: url("images") no-repeat 100% 100%;
+            background-size: cover;
+        }
+    </style>
+</head>
+
+<body>
+<div class="nav">
+    <img src="myphoto/logo.png" alt="">
+    <span class="title">企业云盘系统</span>
+    <!-- 用来占据中间位置 -->
+    <span class="spacer"></span>
+    <a href="blog_list.html">主页</a>
+    <a href="blog_edit.html">详情页</a>
+    <a href="login.html">个人中心</a>
+    <a href="index.html">退出</a>
+    <!-- <a href="#">注销</a> -->
+</div>
+
+<div class="container">
+    <h3 style="text-align: center;margin-bottom: 50px;">企业云盘系统</h3>
+    <div style="float: left;">
+        <form class="form-inline">
+            <div class="form-group">
+                <label  for="ipt_name">链接</label>
+                <input id="link" name="name" type="text" class="form-control" id="ipt_name">
+            </div>
+            <div class="form-group">
+                <label for="ipt_address">文件名称</label>
+                <input name="address" type="text" class="form-control" id="ipt_address">
+            </div>
+<!--            <div class="form-group">-->
+<!--                <label for="ipt_email">文件类型</label>-->
+<!--                <input name="email" type="email" class="form-control" id="ipt_email">-->
+<!--            </div>-->
+            <button id="submit1" type="button" class="btn btn-default" onclick="onclik()">查询</button>
+        </form>
+    </div>
+    <div style="float: right;margin-bottom: 15px">
+        <a class="btn btn-primary" href="file.html">上传文件</a>
+        <a id="delete" class="btn btn-primary" href="javascript:delSel()">删除选中</a>
+    </div>
+    <table border="1" class="table table-bordered table-hover" >
+        <tr class="success">
+            <th>选择</th>
+            <th>编号</th>
+            <th>文件名</th>
+            <th>文件大小</th>
+            <th>上传时间</th>
+            <th>文件类型</th>
+<!--            <th>籍贯</th>-->
+<!--            <th>QQ</th>-->
+<!--            <th>邮箱</th>-->
+<!--            <th>超管</th>-->
+            <th>操作</th>
+        </tr>
+        <tbody id="info">
+        <!--        <tr>-->
+        <!--            <th>-->
+        <!--                <input id="1" type="checkbox">-->
+        <!--            </th>-->
+        <!--            <th>1</th>-->
+        <!--            <th>张三</th>-->
+        <!--            <th>男</th>-->
+        <!--            <th>18</th>-->
+        <!--            <th>北京</th>-->
+        <!--            <th>295628068</th>-->
+        <!--            <th>295628068@qq.com</th>-->
+        <!--            <th>是</th>-->
+        <!--            <th>-->
+        <!--                <a class="btn btn-default btn-sm" href="update.hytml?id=">修改</a>-->
+        <!--                <a class="btn btn-default btn-sm" href="javascript:void(0);">删除</a>-->
+        <!--            </th>-->
+        <!--        </tr>-->
+        <!--        <tr>-->
+        <!--            <th>-->
+        <!--                <input id="2" type="checkbox">-->
+        <!--            </th>-->
+        <!--            <th>2</th>-->
+        <!--            <th>李四</th>-->
+        <!--            <th>男</th>-->
+        <!--            <th>18</th>-->
+        <!--            <th>西安</th>-->
+        <!--            <th>295628068</th>-->
+        <!--            <th>295628068@qq.com</th>-->
+        <!--            <th>否</th>-->
+        <!--            <th>-->
+        <!--                <a class="btn btn-default btn-sm" href="update.html?id=">修改</a>-->
+        <!--                <a class="btn btn-default btn-sm" href="javascript:void(0);">删除</a>-->
+        <!--            </th>-->
+        <!--        </tr>-->
+        </tbody>
+    </table>
+    <div>
+        <nav aria-label="Page navigation">
+            <ul id="all" class="pagination">
+                <!--                <li class="active"><a href="javascript:void(0);">1</a></li>-->
+                <!--                <li><a href="javascript:void(0);">2</a></li>-->
+                <!--                <li><a href="javascript:void(0);">3</a></li>-->
+                <!--                <li><a href="javascript:void(0);" aria-label="Next">-->
+                <!--                    <span aria-hidden="true">&raquo;</span></a>-->
+                <!--                </li>-->
+                <!--                <span style="font-size: 20px;margin-left: 10px;"> 共 10 条记录，共 1 页-->
+                <!--                                  </span>-->
+            </ul>
+        </nav>
+    </div>
+</div>
+</body>
+
+<script>
+    var curid = "";
+    var curname = "";
+    var curtype = "";
+    var cpage = 1;
+    var psize = 4;
+
+    function func(){
+        jQuery("#fo").submit();
+    }
+
+    function onclik() {
+        // curid = jQuery("#ipt_name").val().trim();
+        curname = jQuery("#ipt_address").val().trim();
+        // curtype = jQuery("#ipt_email").val().trim();
+        getData();
+    }
+
+    //统一从url获取参数
+    function getParamValue(urlkey) {
+        var param = location.search;  //?k1=vl&k2=v2
+        param = param.substring(1);   //k1=v1&k2=v2
+        var paramArr = param.split("&"); //k1=vl   k2=v2
+        for(var i = 0; i < paramArr.length; i++){
+            var item = paramArr[i].split("=");
+            if(item[0] == urlkey){
+                return item[1];
+            }
+        }
+        return null;
+    }
+
+    //得到当前用户的id
+    var uid = getParamValue("uid");
+
+    function cliPage(cp) {
+        cpage = cp;
+        getData();
+    }
+
+    function getData() {
+        jQuery.getJSON("/user/allfile", {
+            "uid":uid,
+            "curname":curname,
+            "cpage": cpage,
+            "psize": psize
+        }, function (ret) {
+            if (ret != null && ret.state == 0 && ret.data.list.length > 0) {
+                var userinfo = ret.data;
+                //列表
+                var alist = userinfo.list;
+                //1.绑定列表数据
+                var listHtml = "";
+                for (var i = 0; i < alist.length; i++) {
+                    var file = alist[i];
+                    var name = file.filename;
+                    listHtml += "<tr>\n" +
+                        "            <th>\n" +
+                        "                <input id=" + file.id + " type=\"checkbox\">\n" +
+                        "            </th>\n" +
+                        "            <th>" + file.id + "</th>\n" +
+                        "            <th>" + name + "</th>\n" +
+                        "            <th>" + file.fileSize + "B</th>\n" +
+                        "            <th>" + file.updatedate+ "</th>\n" +
+                        "            <th>" + file.fileType + "</th>\n" +
+                        "            <th>\n" +
+                        "            <form id=\"fo\" method=\"POST\" enctype=\"multipart/form-data\" action=\"/file/download\">" +
+                        "                <button type=\"submit\" class=\"btn btn-default btn-sm\" name=\"name\" value=\""+name+"\" onclick=\"func()\">下载</button>\n" +
+                        "            <form>" +
+                        "                <a class=\"btn btn-default btn-sm\" href='javascript:del(" + file.id + ")'>删除</a>\n" +
+                        "                <a class=\"btn btn-default btn-sm\" href='javascript:share(\"" + file.filename + "\")'> 分享 </a>\n" +
+                        "            </form>\n" +
+                        "        </tr>";
+                }
+                jQuery("#info").html(listHtml);
+
+                //获取总页数
+                var tpage = ret.data.tpage;
+                //alert(tpage);
+                var pageHtml = "";
+                if (tpage > 1) {
+                    for (var j = 1; j <= tpage; j++) {
+                        if (cpage == j) {
+                            // 拼接当前页
+                            pageHtml += '<li class="active"><a href="javascript:cliPage(' +
+                                j + ');">' + j + '</a></li>\n';
+                        } else {
+                            pageHtml += '<li><a href="javascript:cliPage(' +
+                                j + ');">' + j + '</a></li>\n';
+                        }
+                    }
+                    pageHtml += '<li><a href="javascript:cliPage(' + (cpage + 1) +
+                        ');" aria-label="Next">\n' +
+                        '                    <span aria-hidden="true">&raquo;</span></a>\n' +
+                        '                </li>\n' +
+                        '                <span style="font-size: 20px;margin-left: 10px;"> 共 ' +
+                        ret.data.tcount + ' 条记录，共 ' + tpage + ' 页\n' +
+                        '                                  </span>';
+                }
+                jQuery("#all").html(pageHtml);
+            } else {
+                var listHtml = "没有记录";
+                jQuery("#info").html(listHtml);
+                jQuery("#all").html("");
+            }
+        })
+    }
+
+    getData();
+
+
+    //下载
+    function func( ) {
+
+        jQuery("#fo").submit();
+
+        //jQuery("#fo").submit();
+        // alert(filename);
+        // if(confirm("是否进行下载？")){
+        //     jQuery.getJSON("/file/download",{
+        //         "filename":filename,
+        //         "uid":uid
+        //     },function (ret) {
+        //     })
+        // }
+    }
+
+    //删除
+    function del(id) {
+        if(confirm("是否进行删除？")){
+            jQuery.getJSON("/file/del",{
+                "id":id
+            },function (ret) {
+                if (ret != null && ret.data > 0) {
+                    alert("删除成功");
+                    location.href = location.href;
+                } else {
+                    alert("删除失败");
+                }
+            })
+        }
+    }
+
+    //分享
+    function share(filename) {
+        //alert(filename);
+        jQuery.getJSON("/file/share",{
+            "filename":filename
+        },function (ret) {
+            alert(ret.data.url);
+            //prompt(ret.data.url);
+            $("#link").val(ret.data.url);
+        })
+    }
+
+    //删除多条信息
+    function delSel() {
+        //1.获取需要的id，发送给后端
+
+        //待删除用户id集合
+        var ids = "";
+
+        //alert(jQuery("#info").find("tr").length);
+        jQuery("#info").find("tr").each(function (i) {
+
+            //jQuery(this)当前行tr
+            if (jQuery(this).find("th:first").find("input").prop("checked") == true) {
+                ids += jQuery(this).find("th:first").find("input").attr("id") + ",";
+            }
+        })
+
+        //2.后端拿到id集合后在使用，使用for实现多条信息的删除
+        if (ids != "") {
+            if (confirm("是否确认删除")) {
+                //alert(ids);
+                jQuery.getJSON("/file/dels", {"ids": ids}, function (ret) {
+                    if (ret != null &&   ret.data > 0) {
+                        alert("删除成功");
+                        location.href = location.href;
+                    } else {
+                        alert("删除失败，请重试");
+                    }
+                })
+            }
+        } else {
+            alert("请先选择要删除的数据");
+        }
+    }
+
+</script>
+
+<!--<script>-->
+<!--    var name = "";-->
+<!--    var address = "";-->
+<!--    var email = "";-->
+<!--    var cpage = 1;-->
+<!--    var psize = 4;-->
+
+
+<!--    function onclik() {-->
+<!--        name = jQuery("#ipt_name").val().trim();-->
+<!--        address = jQuery("#ipt_address").val().trim();-->
+<!--        email = jQuery("#ipt_email").val().trim();-->
+<!--        getData();-->
+<!--    }-->
+
+<!--    function cliPage(cp) {-->
+<!--        cpage = cp;-->
+<!--        getData();-->
+<!--    }-->
+
+
+<!--    function getData() {-->
+<!--        jQuery.getJSON("/user/list", {-->
+<!--            "name": name,-->
+<!--            "address": address,-->
+<!--            "email": email,-->
+<!--            "cpage": cpage,-->
+<!--            "psize": psize-->
+<!--        }, function (ret) {-->
+
+<!--            if (ret != null && ret.data.list != null && ret.data.list.length > 0) {-->
+<!--                //1.绑定列表数据-->
+<!--                var listHtml = "";-->
+<!--                for (var i = 0; i < ret.data.list.length; i++) {-->
+<!--                    var userinfo = ret.data.list[i];-->
+<!--                    listHtml += "<tr>\n" +-->
+<!--                        "            <th>\n" +-->
+<!--                        "                <input id=" + userinfo.id + " type=\"checkbox\">\n" +-->
+<!--                        "            </th>\n" +-->
+<!--                        "            <th>" + userinfo.id + "</th>\n" +-->
+<!--                        "            <th>" + userinfo.name + "</th>\n" +-->
+<!--                        "            <th>" + userinfo.sex + "</th>\n" +-->
+<!--                        "            <th>" + userinfo.age + "</th>\n" +-->
+<!--                        "            <th>" + userinfo.address + "</th>\n" +-->
+<!--                        "            <th>" + userinfo.qq + "</th>\n" +-->
+<!--                        "            <th>" + userinfo.email + "</th>\n" +-->
+<!--                        "            <th>" + userinfo.isadmin + "</th>\n" +-->
+<!--                        "            <th>\n" +-->
+<!--                        "                <a class=\"btn btn-default btn-sm\" href='update.html?uid=" + userinfo.id + "'> 修改 </a>\n" +-->
+<!--                        "                <a class=\"btn btn-default btn-sm\" href='javascript:del(" + userinfo.id + ")'>删除</a>\n" +-->
+<!--                        "            </th>\n" +-->
+<!--                        "        </tr>";-->
+<!--                }-->
+<!--                jQuery("#info").html(listHtml);-->
+
+<!--                //获取总页数-->
+<!--                var tpage = ret.data.tpage;-->
+<!--                var pageHtml = "";-->
+<!--                if (tpage > 1) {-->
+<!--                    for (var j = 1; j <= tpage; j++) {-->
+<!--                        if (cpage == j) {-->
+<!--                            // 拼接当前页-->
+<!--                            pageHtml += '<li class="active"><a href="javascript:cliPage(' +-->
+<!--                                j + ');">' + j + '</a></li>\n';-->
+<!--                        } else {-->
+
+<!--                            pageHtml += '<li><a href="javascript:cliPage(' +-->
+<!--                                j + ');">' + j + '</a></li>\n';-->
+<!--                        }-->
+<!--                    }-->
+<!--                    pageHtml += '<li><a href="javascript:cliPage(' + (cpage + 1) +-->
+<!--                        ');" aria-label="Next">\n' +-->
+<!--                        '                    <span aria-hidden="true">&raquo;</span></a>\n' +-->
+<!--                        '                </li>\n' +-->
+<!--                        '                <span style="font-size: 20px;margin-left: 10px;"> 共 ' +-->
+<!--                        ret.data.tcount + ' 条记录，共 ' + tpage + ' 页\n' +-->
+<!--                        '                                  </span>';-->
+<!--                }-->
+<!--                jQuery("#all").html(pageHtml);-->
+<!--            } else {-->
+<!--                var listHtml = "没有记录";-->
+<!--                jQuery("#info").html(listHtml);-->
+<!--                jQuery("#all").html("");-->
+<!--            }-->
+
+<!--        })-->
+
+<!--    }-->
+
+<!--    getData();-->
+
+
+<!--    //单条删除-->
+<!--    function del(id) {-->
+<!--        if (confirm("是否进行删除？")) {-->
+<!--            jQuery.getJSON("/user/del", {-->
+<!--                "id": id-->
+<!--            }, function (ret) {-->
+<!--                if (ret != null && ret.data > 0) {-->
+<!--                    alert("删除成功");-->
+<!--                    location.href = location.href;-->
+<!--                } else if (ret != null && ret.data == -1) {-->
+<!--                    alert(ret.message);-->
+<!--                } else {-->
+<!--                    alert("删除失败");-->
+<!--                }-->
+<!--            })-->
+<!--        }-->
+<!--    }-->
+
+
+<!--    //删除多条信息-->
+<!--    function delSel() {-->
+<!--        //1.获取需要的id，发送给后端-->
+
+<!--        //待删除用户id集合-->
+<!--        var ids = "";-->
+
+<!--        //alert(jQuery("#info").find("tr").length);-->
+<!--        jQuery("#info").find("tr").each(function (i) {-->
+
+<!--            //jQuery(this)当前行tr-->
+<!--            if (jQuery(this).find("th:first").find("input").prop("checked") == true) {-->
+<!--                ids += jQuery(this).find("th:first").find("input").attr("id") + ",";-->
+<!--            }-->
+<!--        })-->
+
+<!--        //2.后端拿到id集合后在使用，使用for实现多条信息的删除-->
+<!--        if (ids != "") {-->
+<!--            if (confirm("是否确认删除")) {-->
+<!--                alert(ids);-->
+<!--                jQuery.getJSON("/user/dels", {"ids": ids}, function (ret) {-->
+<!--                    if (ret != null && ret.status == 0 && ret.data > 0) {-->
+<!--                        alert("删除成功");-->
+<!--                        location.href = location.href;-->
+<!--                    } else {-->
+<!--                        alert("删除失败，请重试");-->
+<!--                    }-->
+<!--                })-->
+<!--            }-->
+<!--        } else {-->
+<!--            alert("请先选择要删除的数据");-->
+<!--        }-->
+<!--    }-->
+<!--</script>-->
+
+</html>
