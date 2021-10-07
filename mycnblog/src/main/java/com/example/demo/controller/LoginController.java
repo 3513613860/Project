@@ -24,7 +24,7 @@ public class LoginController {
 
     @RequestMapping("/login")
     @ResponseBody
-    public Object getIndex(User user, HttpServletRequest req){
+    public Object getIndex(@RequestBody User user, HttpServletRequest req){
         User user2 = userMapper.getUserByNameAndPassword(user.getUsername(),user.getPassword());
         if(user2 == null){
             user2 = user;
@@ -33,41 +33,4 @@ public class LoginController {
             session.setAttribute(AppFinal.USERINFO_SESSIONKEY,user2);
         }
         return user2;
-//        Map<String,Object> map = new HashMap<>();
-//        int state = 0;
-//        String msg = "";
-//
-//        if(user.getUsername().equals("root") && user.getPassword().equals("root")){
-//            HttpSession session = req.getSession();
-//            session.setAttribute("userinfo",user);
-//            msg = "登录成功";
-//            state = 1;
-//        }else{
-//            msg = "登录失败";
-//        }
-//        map.put("state",state);
-//        map.put("msg",msg);
-//        return map;
-    }
-
-    @RequestMapping("/login2")
-    @ResponseBody
-    public Map login2(HttpServletRequest resp,HttpServletRequest req) throws IOException {
-        Map<String,Object> map = new HashMap<>();
-        String msg = "登录失败";
-        int state = -1;
-
-        String username = req.getParameter("username");
-        String password = req.getParameter("password");
-
-        if(username != null && password != null &&
-                username.equals("root") && password.equals("root")){
-            msg = "登录成功";
-            state = 1;
-        }
-        map.put("msg",msg);
-        map.put("state",state);
-
-        return map;
-    }
 }
